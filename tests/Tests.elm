@@ -1,22 +1,27 @@
 module Tests exposing (..)
 
-import Test exposing (..)
 import Expect
+import Main exposing (canGenerateLink)
+import Test exposing (..)
+
 
 
 -- Check out https://package.elm-lang.org/packages/elm-explorations/test/latest to learn more about testing in Elm!
 
 
-all : Test
-all =
-    describe "A Test Suite"
-        [ test "Addition" <|
+canGenerateLinkTest : Test
+canGenerateLinkTest =
+    describe "canGenerateLink"
+        [ test "Shouldn't generate link with empty string" <|
             \_ ->
-                Expect.equal 10 (3 + 7)
-        , test "String.left" <|
+                Expect.equal False (canGenerateLink { generatedLink = "", isLoading = False, linkInputValue = "" })
+        , test "Shouldn't generate link with wrong string" <|
             \_ ->
-                Expect.equal "a" (String.left 1 "abcdefg")
-        , test "This test should fail" <|
+                Expect.equal False (canGenerateLink { generatedLink = "", isLoading = False, linkInputValue = "I'm definately not a link" })
+        , test "Should generate link with correct string" <|
             \_ ->
-                Expect.fail "failed as expected!"
+                Expect.equal True (canGenerateLink { generatedLink = "", isLoading = False, linkInputValue = "https://google.com" })
+        , test "Shouldn't retry to generate link while it's loading" <|
+            \_ ->
+                Expect.equal False (canGenerateLink { generatedLink = "", isLoading = True, linkInputValue = "https://google.com" })
         ]
