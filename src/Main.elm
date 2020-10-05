@@ -1,56 +1,129 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Html exposing (Html, a, button, div, input, text)
+import Html.Attributes exposing (class, disabled, href, placeholder, style, target, value)
+import Html.Events exposing (onClick, onInput)
+import Http
+import Json.Decode exposing (Decoder, field, string)
+import Json.Encode as Encode
+import Regex
 
 
----- MODEL ----
+bitlyApiToken =
+    "f221393742452044bda6b4805a6efe9cde106c4f"
+
+
+urlRegex =
+    Maybe.withDefault Regex.never <|
+        Regex.fromString "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+
+
+linkDecoder : Decoder String
+linkDecoder =
+    field "link" string
+
+
+canGenerateLink : Model -> Bool
+canGenerateLink model =
+    Regex.contains urlRegex model.linkInputValue && not model.isLoading
+
+
+generateLink : String -> Cmd Msg
+generateLink longLink =
+    Http.request
+        { method = "POST"
+        , expect = Http.expectJson GenerateLink linkDecoder
+        , url = "https://api-ssl.bitly.com/v4/shorten"
+        , headers = [ Http.header "Authorization" ("Bearer " ++ bitlyApiToken) ]
+        , body =
+            Encode.object [ ( "long_url", Encode.string longLink ) ]
+                |> Http.jsonBody
+        , timeout = Nothing
+        , tracker = Nothing
+        }
 
 
 type alias Model =
-    {}
+    { linkInputValue : String
+    , isLoading : Bool
+    , generatedLink : String
+    }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+initialModel : () -> ( Model, Cmd msg )
+initialModel _ =
+    ( { generatedLink = "", isLoading = False, linkInputValue = "" }, Cmd.none )
 
 
-
----- UPDATE ----
+reset : Model -> Model
+reset model =
+    { model | isLoading = False, linkInputValue = "" }
 
 
 type Msg
-    = NoOp
+    = ChangeLinkInput String
+    | ClickButton
+    | GenerateLink (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        ChangeLinkInput newLinkInputValue ->
+            ( { model | linkInputValue = newLinkInputValue }, Cmd.none )
 
+        ClickButton ->
+            ( { model | isLoading = True }
+            , generateLink model.linkInputValue
+            )
 
+        GenerateLink result ->
+            case result of
+                Ok link ->
+                    ( { model | generatedLink = link } |> reset, Cmd.none )
 
----- VIEW ----
+                Err _ ->
+                    ( { model | generatedLink = "Oh, something went wrong" } |> reset, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+        [ div [ class "input-container" ]
+            [ input
+                [ class "input"
+                , placeholder "Enter link"
+                , value model.linkInputValue
+                , onInput ChangeLinkInput
+                , disabled model.isLoading
+                ]
+                []
+            , button
+                [ class "button"
+                , disabled (not (canGenerateLink model))
+                , onClick ClickButton
+                ]
+                [ text "generate link" ]
+            ]
+        , a
+            [ href model.generatedLink
+            , target "_blank"
+            ]
+            [ text model.generatedLink ]
         ]
 
 
-
----- PROGRAM ----
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 main : Program () Model Msg
 main =
     Browser.element
-        { view = view
-        , init = \_ -> init
+        { init = initialModel
+        , subscriptions = subscriptions
+        , view = view
         , update = update
-        , subscriptions = always Sub.none
         }
