@@ -27,9 +27,20 @@ jobs:
         run: npm install create-elm-app
 
       # Runs a set of commands using the runners shell
-      - name: Build
-        run: npx elm-app build
+          
+      - name: Make
+        run: npx elm-app make --optimize src/Main.elm
       
       - name: Test
         run: npx elm-app test
 
+      - name: Move files
+        run: mv ./index.html ./public/
+      
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.6.4
+        with:
+          github_token: ${{ secrets.MY_SECRET }}
+          publish_dir: ./public
+
+        
