@@ -1,3 +1,5 @@
+# Demo is here [here](https://antarid.github.io/elm-link-shortener). If it doesn't work, reload.
+
 # Elm App
 
 This project is bootstrapped with [Create Elm App](https://github.com/halfzebra/create-elm-app).
