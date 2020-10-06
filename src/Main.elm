@@ -1,4 +1,4 @@
-module Main exposing (canGenerateLink, main)
+module Main exposing (Model, Msg(..), canGenerateLink, initialModel, main, update, view)
 
 import Browser
 import Html exposing (Html, a, button, div, input, text)
