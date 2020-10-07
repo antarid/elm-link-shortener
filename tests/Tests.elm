@@ -20,22 +20,22 @@ canGenerateLinkTest =
     describe "canGenerateLink test"
         [ test "shouldn't generate link with empty string" <|
             \_ ->
-                { generatedLink = "", isLoading = False, linkInputValue = "" }
+                initialModel
                     |> canGenerateLink
                     |> Expect.equal False
         , test "shouldn't generate link with wrong string" <|
             \_ ->
-                { generatedLink = "", isLoading = False, linkInputValue = "I'm definately not a link" }
+                { initialModel | linkInputValue = "I'm definately not a link" }
                     |> canGenerateLink
                     |> Expect.equal False
         , test "should generate link with correct string" <|
             \_ ->
-                { generatedLink = "", isLoading = False, linkInputValue = "https://google.com" }
+                { initialModel | linkInputValue = "https://google.com" }
                     |> canGenerateLink
                     |> Expect.equal True
         , test "shouldn't retry to generate link while it's loading" <|
             \_ ->
-                { generatedLink = "", isLoading = True, linkInputValue = "https://google.com" }
+                { initialModel | isLoading = True, linkInputValue = "https://google.com" }
                     |> canGenerateLink
                     |> Expect.equal False
         ]
@@ -63,17 +63,17 @@ viewTest =
         [ describe "button"
             [ test "should be disabled on initialization" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "" }
+                    initialModel
                         |> getButton
                         |> Query.has [ Selector.text "generate link", Selector.disabled True ]
             , test "should be enabled when linkInputValue is a correct link" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "https://google.com" }
+                    { initialModel | linkInputValue = "https://google.com" }
                         |> getButton
                         |> Query.has [ Selector.disabled False ]
             , test "should produce ClickButton action on click" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "https://google.com" }
+                    { initialModel | linkInputValue = "https://google.com" }
                         |> getButton
                         |> Event.simulate Event.click
                         |> Event.expect ClickButton
@@ -81,23 +81,23 @@ viewTest =
         , describe "input"
             [ test "should be enabled when is not loading" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "Whatever" }
+                    { initialModel | linkInputValue = "Whatever" }
                         |> getInput
                         |> Query.has [ Selector.disabled False ]
             , test "should be disabled when is loading" <|
                 \_ ->
-                    { generatedLink = "", isLoading = True, linkInputValue = "Whatever" }
+                    { initialModel | isLoading = True, linkInputValue = "Whatever" }
                         |> getInput
                         |> Query.has [ Selector.disabled True ]
             , test "should produce ChangeLinkInput action on input" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "" }
+                    initialModel
                         |> getInput
                         |> Event.simulate (Event.input "smth")
                         |> Event.expect (ChangeLinkInput "smth")
             , test "should have value according to linkInputValue" <|
                 \_ ->
-                    { generatedLink = "", isLoading = False, linkInputValue = "value" }
+                    { initialModel | linkInputValue = "value" }
                         |> getInput
                         |> Query.has [ Selector.attribute (value "value") ]
             ]
@@ -110,7 +110,7 @@ updateTest =
         [ describe "ChangeLinkInput"
             [ test "should update model correctly" <|
                 \_ ->
-                    update (ChangeLinkInput "newValue") { generatedLink = "", isLoading = False, linkInputValue = "" }
+                    update (ChangeLinkInput "newValue") initialModel
                         |> Tuple.first
                         |> (\model -> model.linkInputValue)
                         |> Expect.equal "newValue"
@@ -118,13 +118,13 @@ updateTest =
         , describe "GenerateLink"
             [ test "should update model with Ok result" <|
                 \_ ->
-                    update (GenerateLink (Ok "https://shrtnd.link")) { generatedLink = "", isLoading = True, linkInputValue = "https://google.com" }
+                    update (GenerateLink (Ok "https://shrtnd.link")) { initialModel | isLoading = True, linkInputValue = "https://google.com" }
                         |> Tuple.first
-                        |> Expect.equal { generatedLink = "https://shrtnd.link", isLoading = False, linkInputValue = "" }
+                        |> Expect.equal initialModel
             , test "should update model with Error result" <|
                 \_ ->
-                    update (GenerateLink (Err (Http.BadStatus 500))) { generatedLink = "", isLoading = True, linkInputValue = "https://google.com" }
+                    update (GenerateLink (Err (Http.BadStatus 500))) { initialModel | isLoading = True, linkInputValue = "https://google.com" }
                         |> Tuple.first
-                        |> Expect.equal { generatedLink = "Oh, something went wrong", isLoading = False, linkInputValue = "" }
+                        |> Expect.equal initialModel
             ]
         ]

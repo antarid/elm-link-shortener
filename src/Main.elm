@@ -51,18 +51,16 @@ port sendMessage : String -> Cmd msg
 type alias Model =
     { linkInputValue : String
     , isLoading : Bool
-    , generatedLink : String
     }
 
 
-initialModel : () -> ( Model, Cmd msg )
-initialModel _ =
-    ( { generatedLink = "", isLoading = False, linkInputValue = "" }, Cmd.none )
+initialModel =
+    { isLoading = False, linkInputValue = "" }
 
 
-reset : Model -> Model
-reset model =
-    { model | isLoading = False, linkInputValue = "" }
+init : () -> ( Model, Cmd msg )
+init _ =
+    ( initialModel, Cmd.none )
 
 
 type Msg
@@ -85,10 +83,10 @@ update msg model =
         GenerateLink result ->
             case result of
                 Ok link ->
-                    ( { model | generatedLink = link } |> reset, link |> getShowLinkMessage |> sendMessage )
+                    ( initialModel, link |> getShowLinkMessage |> sendMessage )
 
                 Err _ ->
-                    ( { model | generatedLink = "Oh, something went wrong" } |> reset, "Oh, something went wrong" |> getShowLinkMessage |> sendMessage )
+                    ( initialModel, "Oh, something went wrong" |> getShowLinkMessage |> sendMessage )
 
 
 view : Model -> Html Msg
@@ -121,7 +119,7 @@ subscriptions _ =
 main : Program () Model Msg
 main =
     Browser.element
-        { init = initialModel
+        { init = init
         , subscriptions = subscriptions
         , view = view
         , update = update
