@@ -77,7 +77,10 @@ update msg model =
 
         ClickButton ->
             ( { model | isLoading = True }
-            , generateLink model.linkInputValue
+            , Cmd.batch
+                [ getHideLinkMessage |> sendMessage
+                , generateLink model.linkInputValue
+                ]
             )
 
         GenerateLink result ->
