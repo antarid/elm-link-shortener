@@ -798,11 +798,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region._.J === region.aj.J)
+	if (region._.I === region.aj.I)
 	{
-		return 'on line ' + region._.J;
+		return 'on line ' + region._.I;
 	}
-	return 'on lines ' + region._.J + ' through ' + region.aj.J;
+	return 'on lines ' + region._.I + ' through ' + region.aj.I;
 }
 
 
@@ -5432,7 +5432,7 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$initialModel = function (_v0) {
 	return _Utils_Tuple2(
-		{E: '', F: false, z: ''},
+		{P: '', E: false, z: ''},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -6276,11 +6276,15 @@ var $author$project$Main$generateLink = function (longLink) {
 			bL: 'https://api-ssl.bitly.com/v4/shorten'
 		});
 };
+var $author$project$Api$getShowLinkMessage = function (link) {
+	return '[\"showLink\", ' + ('\"' + (link + '\"]'));
+};
 var $author$project$Main$reset = function (model) {
 	return _Utils_update(
 		model,
-		{F: false, z: ''});
+		{E: false, z: ''});
 };
+var $author$project$Main$sendMessage = _Platform_outgoingPort('sendMessage', $elm$json$Json$Encode$string);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6295,7 +6299,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{F: true}),
+						{E: true}),
 					$author$project$Main$generateLink(model.z));
 			default:
 				var result = msg.a;
@@ -6305,15 +6309,17 @@ var $author$project$Main$update = F2(
 						$author$project$Main$reset(
 							_Utils_update(
 								model,
-								{E: link})),
-						$elm$core$Platform$Cmd$none);
+								{P: link})),
+						$author$project$Main$sendMessage(
+							$author$project$Api$getShowLinkMessage(link)));
 				} else {
 					return _Utils_Tuple2(
 						$author$project$Main$reset(
 							_Utils_update(
 								model,
-								{E: 'Oh, something went wrong'})),
-						$elm$core$Platform$Cmd$none);
+								{P: 'Oh, something went wrong'})),
+						$author$project$Main$sendMessage(
+							$author$project$Api$getShowLinkMessage('Oh, something went wrong')));
 				}
 		}
 	});
@@ -6321,7 +6327,6 @@ var $author$project$Main$ChangeLinkInput = function (a) {
 	return {$: 0, a: a};
 };
 var $author$project$Main$ClickButton = {$: 1};
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
@@ -6351,7 +6356,7 @@ var $author$project$Main$urlRegex = A2(
 	$elm$regex$Regex$never,
 	$elm$regex$Regex$fromString('https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)'));
 var $author$project$Main$canGenerateLink = function (model) {
-	return A2($elm$regex$Regex$contains, $author$project$Main$urlRegex, model.z) && (!model.F);
+	return A2($elm$regex$Regex$contains, $author$project$Main$urlRegex, model.z) && (!model.E);
 };
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6371,12 +6376,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
@@ -6427,14 +6427,16 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('elm-container')
+			]),
 		_List_fromArray(
 			[
 				A2(
@@ -6453,7 +6455,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$Attributes$placeholder('Enter link'),
 								$elm$html$Html$Attributes$value(model.z),
 								$elm$html$Html$Events$onInput($author$project$Main$ChangeLinkInput),
-								$elm$html$Html$Attributes$disabled(model.F)
+								$elm$html$Html$Attributes$disabled(model.E)
 							]),
 						_List_Nil),
 						A2(
@@ -6469,17 +6471,6 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$text('generate link')
 							]))
-					])),
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href(model.E),
-						$elm$html$Html$Attributes$target('_blank')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(model.E)
 					]))
 			]));
 };
