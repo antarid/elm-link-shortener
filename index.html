@@ -6275,6 +6275,7 @@ var $author$project$Main$generateLink = function (longLink) {
 			bK: 'https://api-ssl.bitly.com/v4/shorten'
 		});
 };
+var $author$project$Api$getHideLinkMessage = '[\"hideLink\"]';
 var $author$project$Api$getShowLinkMessage = function (link) {
 	return '[\"showLink\", ' + ('\"' + (link + '\"]'));
 };
@@ -6294,7 +6295,12 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{H: true}),
-					$author$project$Main$generateLink(model.D));
+					$elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								$author$project$Main$sendMessage($author$project$Api$getHideLinkMessage),
+								$author$project$Main$generateLink(model.D)
+							])));
 			default:
 				var result = msg.a;
 				if (!result.$) {
