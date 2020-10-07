@@ -1,8 +1,9 @@
-module Main exposing (Model, Msg(..), canGenerateLink, initialModel, main, update, view)
+port module Main exposing (Model, Msg(..), canGenerateLink, initialModel, main, update, view)
 
+import Api exposing (..)
 import Browser
 import Html exposing (Html, a, button, div, input, text)
-import Html.Attributes exposing (class, disabled, href, placeholder, style, target, value)
+import Html.Attributes exposing (class, disabled, href, id, placeholder, style, target, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode exposing (Decoder, field, string)
@@ -44,6 +45,9 @@ generateLink longLink =
         }
 
 
+port sendMessage : String -> Cmd msg
+
+
 type alias Model =
     { linkInputValue : String
     , isLoading : Bool
@@ -81,15 +85,15 @@ update msg model =
         GenerateLink result ->
             case result of
                 Ok link ->
-                    ( { model | generatedLink = link } |> reset, Cmd.none )
+                    ( { model | generatedLink = link } |> reset, link |> getShowLinkMessage |> sendMessage )
 
                 Err _ ->
-                    ( { model | generatedLink = "Oh, something went wrong" } |> reset, Cmd.none )
+                    ( { model | generatedLink = "Oh, something went wrong" } |> reset, "Oh, something went wrong" |> getShowLinkMessage |> sendMessage )
 
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ id "elm-container" ]
         [ div [ class "input-container" ]
             [ input
                 [ class "input"
@@ -106,11 +110,6 @@ view model =
                 ]
                 [ text "generate link" ]
             ]
-        , a
-            [ href model.generatedLink
-            , target "_blank"
-            ]
-            [ text model.generatedLink ]
         ]
 
 
