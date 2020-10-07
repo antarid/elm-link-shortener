@@ -79,7 +79,7 @@ update msg model =
             ( { model | isLoading = True }
             , Cmd.batch
                 [ getHideLinkMessage |> sendMessage
-                , generateLink model.linkInputValue
+                , model.linkInputValue |> generateLink
                 ]
             )
 
