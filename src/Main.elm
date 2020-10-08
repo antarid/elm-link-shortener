@@ -127,6 +127,7 @@ view model =
                         , value model.linkInputValue
                         , onInput ChangeLinkInput
                         , disabled model.isLoading
+                        , attribute "data-testid" "link-input"
                         ]
                         []
                     , button

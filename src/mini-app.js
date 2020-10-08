@@ -8,6 +8,7 @@ export const showLink = (link) => {
   newLinkElement.innerHTML = link;
   newLinkElement.target = '_blank';
   newLinkElement.id = linkElementId;
+  newLinkElement.setAttribute('data-testid', 'shortened-link');
 
   document.getElementById('elm-container').appendChild(newLinkElement);
 };
