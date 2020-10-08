@@ -1,7 +1,7 @@
 {
   "main.css": "/elm-link-shortener/static/css/main.7eeb4bbb.chunk.css",
-  "main.js": "/elm-link-shortener/static/js/main.e4d1ef6e.chunk.js",
-  "main.js.map": "/elm-link-shortener/static/js/main.e4d1ef6e.chunk.js.map",
+  "main.js": "/elm-link-shortener/static/js/main.f5c41405.chunk.js",
+  "main.js.map": "/elm-link-shortener/static/js/main.f5c41405.chunk.js.map",
   "runtime~main.js": "/elm-link-shortener/static/js/runtime~main.1e8c51c8.js",
   "runtime~main.js.map": "/elm-link-shortener/static/js/runtime~main.1e8c51c8.js.map",
   "vendors~main.js": "/elm-link-shortener/static/js/vendors~main.bb36eb2f.chunk.js",
@@ -11,5 +11,5 @@
   "index.html": "/elm-link-shortener/index.html",
   "logo.svg": "/elm-link-shortener/logo.svg",
   "manifest.json": "/elm-link-shortener/manifest.json",
-  "precache-manifest.5c25a7d6a5dcacbb1cb2497d9e2afd94.js": "/elm-link-shortener/precache-manifest.5c25a7d6a5dcacbb1cb2497d9e2afd94.js"
+  "precache-manifest.5d76975cd79798a58291c3278e2818ed.js": "/elm-link-shortener/precache-manifest.5d76975cd79798a58291c3278e2818ed.js"
 }
