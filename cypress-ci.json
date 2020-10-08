@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://antarid.github.io/elm-link-shortener",
+  "integrationFolder": "cypress/e2e",
+  "video": false,
+  "screenshotOnRunFailure": false
+}

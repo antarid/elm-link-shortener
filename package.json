@@ -6,6 +6,8 @@
     "prettier-plugin-elm": "^0.7.0"
   },
   "scripts": {
-    "test:e2e": "cypress run"
+    "test:e2e": "cypress run",
+    "test:unit": "elm-app test",
+    "test": "npm run test:e2e && npm run test:unit"
   }
 }
